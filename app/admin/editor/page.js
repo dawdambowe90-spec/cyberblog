@@ -38,7 +38,7 @@ export default function PostEditor() {
 
   // Media State
   const [isUploading, setIsUploading] = useState(false)
-  const fileInputRef = useRef<HTMLInputElement>(null)
+  const fileInputRef = useRef(null)
 
   // SEO State
   const [showSEO, setShowSEO] = useState(false)
@@ -46,9 +46,9 @@ export default function PostEditor() {
   const [seoScore, setSeoScore] = useState(0)
   const [readability, setReadability] = useState('Poor')
 
-  const textareaRef = useRef<HTMLTextAreaElement>(null)
+  const textareaRef = useRef(null)
 
-  const insertText = (before: string, after: string = '') => {
+  const insertText = (before, after = '') => {
     const textarea = textareaRef.current
     if (!textarea) return
     
@@ -83,7 +83,7 @@ export default function PostEditor() {
     setAiPrompt('')
   }
 
-  const handleMediaUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleMediaUpload = async (e) => {
     const file = e.target.files?.[0]
     if (!file) return
 
