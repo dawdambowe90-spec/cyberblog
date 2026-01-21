@@ -1,17 +1,42 @@
-import { getAllPostIds } from '@/lib/posts';
-
-const URL = 'https://cyberblog-demo.vercel.app';
+import { createClient } from '@/lib/supabase/server'
 
 export default async function sitemap() {
-  const posts = getAllPostIds().map(({ params }) => ({
-    url: `${URL}/blog/${params.slug}`,
-    lastModified: new Date().toISOString(),
-  }));
+  const supabase = await createClient()
+  const baseUrl = 'https://cyberblog.vercel.app'
 
-  const routes = ['', '/about'].map((route) => ({
-    url: `${URL}${route}`,
-    lastModified: new Date().toISOString(),
-  }));
+  try {
+    const { data: posts, error } = await supabase
+      .from('posts')
+      .select('slug, updated_at, created_at')
+      .eq('published', true)
 
-  return [...routes, ...posts];
+    if (error) throw error
+
+    const postEntries = (posts || []).map((post) => ({
+      url: `${baseUrl}/post/${post.slug}`,
+      lastModified: new Date(post.updated_at || post.created_at || new Date()),
+      changeFrequency: 'weekly',
+      priority: 0.7,
+    }))
+
+    return [
+      {
+        url: baseUrl,
+        lastModified: new Date(),
+        changeFrequency: 'daily',
+        priority: 1,
+      },
+      ...postEntries,
+    ]
+  } catch (err) {
+    console.error('Sitemap generation error:', err)
+    return [
+      {
+        url: baseUrl,
+        lastModified: new Date(),
+        changeFrequency: 'daily',
+        priority: 1,
+      },
+    ]
+  }
 }
