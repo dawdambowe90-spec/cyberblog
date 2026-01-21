@@ -7,9 +7,9 @@ import { Eye, EyeOff, Loader2 } from 'lucide-react'
 export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  const [error, setError] = useState(null)
 
-  async function handleSubmit(formData: FormData) {
+  async function handleSubmit(formData) {
     setIsLoading(true)
     setError(null)
     const result = await login(formData)
