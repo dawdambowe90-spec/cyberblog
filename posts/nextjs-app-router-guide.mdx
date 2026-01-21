@@ -1,0 +1,40 @@
+---
+title: "Mastering the Next.js App Router"
+date: "2026-01-18"
+excerpt: "A comprehensive guide to understanding Server Components, layouts, and the new routing paradigm in Next.js. Upgrade your skills effectively."
+author: "Antigravity"
+category: "Tutorial"
+tags: ["nextjs", "react", "tutorial"]
+---
+
+The **App Router** represents the biggest shift in the React ecosystem in years. It allows us to leverage **React Server Components (RSC)** to ship less JavaScript to the client.
+
+## Understanding Server Components
+
+Server Components run *only* on the server. They have zero impact on bundle size.
+
+### When to use Client Components?
+
+Use Client Components when you need interactivity:
+- `onClick`, `onChange` listeners
+- `useState`, `useReducer`, `useEffect` hooks
+- Browser-only APIs
+
+```jsx
+// This runs on the server
+async function getData() {
+  const res = await fetch('https://api.example.com/data');
+  return res.json();
+}
+
+export default async function Page() {
+  const data = await getData();
+  return <main>{/* Render data */}</main>;
+}
+```
+
+## Nested Layouts
+
+One of the most powerful features is nested layouts. You can wrap specific route segments in their own persistent UI shells.
+
+This enables complex dashboard interfaces with minimal state management overhead.

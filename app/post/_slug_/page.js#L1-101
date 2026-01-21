@@ -1,0 +1,98 @@
+import { createClient } from '@/lib/supabase/server'
+import { notFound } from 'next/navigation'
+import Link from 'next/link'
+import { ArrowLeft, Calendar, Clock, Sparkles } from 'lucide-react'
+import ViewTracker from './ViewTracker'
+
+export default async function PostPage({ params }) {
+  const { slug } = await params
+  const supabase = await createClient()
+
+  const { data: post, error } = await supabase
+    .from('posts')
+    .select('*')
+    .eq('slug', slug)
+    .single()
+
+  if (error || !post) {
+    notFound()
+  }
+
+  // Simple reading time calculation
+  const wordCount = post.content?.split(/\s+/).length || 0
+  const readingTime = Math.max(1, Math.ceil(wordCount / 200))
+
+  return (
+    <article className="min-h-screen pb-24 animate-fade-in relative">
+      <ViewTracker postId={post.id} />
+      
+      {/* Background Glow */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-4xl h-[500px] bg-primary/5 rounded-full blur-[120px] -z-10 pointer-events-none" />
+
+      <div className="container mx-auto px-4 lg:px-8">
+        <div className="max-w-3xl mx-auto">
+          {/* Back Button */}
+          <Link 
+            href="/" 
+            className="inline-flex items-center gap-2 text-sm font-bold text-slate hover:text-primary mb-12 transition-all group"
+          >
+            <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
+            Home
+          </Link>
+
+          {/* Header */}
+          <header className="mb-16 space-y-8">
+            <div className="flex items-center gap-4">
+              <span className="px-3 py-1 rounded-xl bg-primary/10 text-primary text-xs font-black uppercase tracking-widest">
+                {post.category || 'Deep Tech'}
+              </span>
+              <div className="flex items-center gap-6 text-sm font-bold text-slate/40 italic">
+                <div className="flex items-center gap-1.5">
+                  <Calendar size={16} className="text-accent" />
+                  {new Date(post.created_at).toLocaleDateString()}
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <Clock size={16} className="text-primary" />
+                  {readingTime} min read
+                </div>
+              </div>
+            </div>
+
+            <h1 className="text-4xl md:text-6xl font-black tracking-tight leading-[1.1] text-foreground">
+              {post.title}
+            </h1>
+
+            <p className="text-xl md:text-2xl text-slate font-medium leading-relaxed italic border-l-4 border-primary pl-8 py-2">
+              {post.excerpt}
+            </p>
+          </header>
+
+          {/* Content */}
+          <div className="glass rounded-[40px] p-8 md:p-12 shadow-2xl relative overflow-hidden mb-16">
+            <div className="absolute top-0 right-0 p-8 opacity-5">
+              <Sparkles size={100} className="text-primary" />
+            </div>
+            
+            <div className="prose prose-lg dark:prose-invert prose-indigo max-w-none leading-loose">
+              {/* For now rendering as plain text/html, would use MDXRemote for real MD */}
+              <div dangerouslySetInnerHTML={{ __html: post.content.replace(/\n/g, '<br/>') }} />
+            </div>
+          </div>
+
+          {/* Footer / Author Placeholder */}
+          <footer className="pt-12 border-t border-border/50">
+            <div className="flex items-center gap-6 p-8 glass rounded-3xl">
+              <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-primary to-accent flex items-center justify-center text-white text-3xl font-black">
+                C
+              </div>
+              <div className="space-y-1">
+                <h4 className="font-bold text-xl">Cyberblog Author</h4>
+                <p className="text-slate text-sm font-medium italic">Architecting the future through bytes and logic.</p>
+              </div>
+            </div>
+          </footer>
+        </div>
+      </div>
+    </article>
+  )
+}
