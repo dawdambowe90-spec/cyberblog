@@ -2,9 +2,9 @@
 
 import { createClient } from '@/lib/supabase/server'
 
-export async function uploadMedia(formData: FormData) {
+export async function uploadMedia(formData) {
   const supabase = await createClient()
-  const file = formData.get('file') as File
+  const file = formData.get('file')
 
   if (!file) {
     return { error: 'No file provided' }

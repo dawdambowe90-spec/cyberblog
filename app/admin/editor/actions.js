@@ -4,7 +4,7 @@ import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 
-export async function savePost(formData: FormData) {
+export async function savePost(formData) {
   const supabase = await createClient()
 
   const {
@@ -15,9 +15,9 @@ export async function savePost(formData: FormData) {
     throw new Error('User not authenticated')
   }
 
-  const title = formData.get('title') as string
-  const content = formData.get('content') as string
-  const slug = formData.get('slug') as string || title.toLowerCase().replace(/ /g, '-').replace(/[^\w-]+/g, '')
+  const title = formData.get('title')
+  const content = formData.get('content')
+  const slug = formData.get('slug') || title.toLowerCase().replace(/ /g, '-').replace(/[^\w-]+/g, '')
 
   const postData = {
     title,
@@ -25,10 +25,10 @@ export async function savePost(formData: FormData) {
     slug,
     author_id: user.id,
     published: formData.get('published') === 'true',
-    excerpt: formData.get('excerpt') as string || content.substring(0, 150) + '...',
+    excerpt: formData.get('excerpt') || content.substring(0, 150) + '...',
   }
 
-  const id = formData.get('id') as string
+  const id = formData.get('id')
 
   if (id) {
     const { error } = await supabase
@@ -48,7 +48,7 @@ export async function savePost(formData: FormData) {
   redirect('/admin/posts')
 }
 
-export async function deletePost(id: string) {
+export async function deletePost(id) {
   const supabase = await createClient()
   const { error } = await supabase.from('posts').delete().eq('id', id)
   if (error) throw error

@@ -6,7 +6,7 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 })
 
-export async function generateAIAssistance(prompt: string, context: string = '') {
+export async function generateAIAssistance(prompt, context = '') {
   if (!process.env.OPENAI_API_KEY) {
     return { error: 'OpenAI API Key not configured.' }
   }
@@ -28,7 +28,7 @@ export async function generateAIAssistance(prompt: string, context: string = '')
     })
 
     return { content: response.choices[0].message.content }
-  } catch (error: any) {
+  } catch (error) {
     console.error('AI Assistance Error:', error)
     return { error: error.message || 'Failed to generate AI assistance.' }
   }
