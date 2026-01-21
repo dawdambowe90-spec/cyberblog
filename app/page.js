@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import BlogList from '@/components/BlogList'
+import Newsletter from '@/components/Newsletter'
 import { Sparkles, ArrowRight } from 'lucide-react'
 import Link from 'next/link'
 
@@ -72,6 +73,11 @@ export default async function Home() {
         </div>
         
         <BlogList allPostsData={posts || []} />
+      </section>
+
+      {/* Newsletter Section */}
+      <section className="container mx-auto px-4 lg:px-8">
+        <Newsletter />
       </section>
     </div>
   )
